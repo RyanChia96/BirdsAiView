@@ -1,0 +1,9 @@
+{
+  "name": "industries",
+  "title": "BirdEyeView | Industries & Markets",
+  "chat_id": "",
+  "sources": [],
+  "keywords": ["industry", "market", "sector", "outlook", "regulation", "policy"],
+  "max_items": 5,
+  "use_ai_summary": false
+}

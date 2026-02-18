@@ -1,0 +1,6 @@
+{
+  "telegram_bot_token": "from .env or set here",
+  "telegram_chat_id": "your default chat id",
+  "model": "gpt-4o-mini",
+  "openai_api_key": "from .env preferred"
+}
