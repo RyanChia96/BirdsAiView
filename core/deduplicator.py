@@ -29,11 +29,7 @@ def _source_priority(source: str) -> int:
 
 def _item_quality(item: dict[str, Any]) -> float:
     """Composite quality for choosing which item to keep in a cluster."""
-    score = _source_priority(item.get("source", ""))
-    # Recency: prefer published date if available (simplified - newer = higher)
-    if item.get("quality_score") is not None:
-        score += float(item.get("quality_score", 0))
-    return score
+    return float(_source_priority(item.get("source", "")))
 
 
 def deduplicate_semantic(

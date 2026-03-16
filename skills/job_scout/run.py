@@ -1,6 +1,6 @@
 """
-Job Scout skill — script OpenClaw (or main.py) calls.
-Runs the job-scout pipeline: fetch job/industry sources → filter → send to Telegram.
+Job Scout skill — fetch job/industry sources, filter by keywords.
+Outputs JSON for OpenClaw to consume. No Telegram send.
 """
 import os
 import sys
@@ -12,9 +12,8 @@ _REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__f
 if _REPO_ROOT not in sys.path:
     sys.path.insert(0, _REPO_ROOT)
 
-from core.telegram import send_telegram, get_telegram_config, html_escape
 from core.scraper import fetch_sources
-from core.processor import is_relevant, summarize_batch
+from core.deduplicator import deduplicate_semantic
 
 
 def load_json(path: str):
@@ -22,14 +21,14 @@ def load_json(path: str):
         return json.load(f)
 
 
-def save_json(path: str, data):
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    with open(path, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
-
-
 def _norm(s: str) -> str:
     return " ".join((s or "").strip().lower().split())
+
+
+def is_relevant(item: dict, keywords: list[str]) -> bool:
+    """Keyword-based relevance."""
+    text = _norm(item.get("title", "") + " " + item.get("summary", ""))
+    return any(_norm(kw) in text for kw in keywords if (kw or "").strip())
 
 
 def item_id(title: str, link: str) -> str:
@@ -41,11 +40,7 @@ def main() -> None:
     os.chdir(_REPO_ROOT)
 
     config = load_json("config.json")
-    bot_token = config.get("telegram_bot_token") or os.getenv("TELEGRAM_BOT_TOKEN")
-    if not bot_token:
-        bot_token, _ = get_telegram_config(config)
 
-    # Prefer pipeline job_scout.json or jobs.json
     for name in ("job_scout", "jobs"):
         path = os.path.join("pipelines", f"{name}.json")
         if os.path.isfile(path):
@@ -53,23 +48,14 @@ def main() -> None:
             break
     else:
         pipeline = {
-            "title": "BirdEyeView | Job Scout",
-            "chat_id": config.get("telegram_chat_id"),
             "sources": [],
             "keywords": ["job", "career", "hiring", "role", "position"],
-            "max_items": 5,
-            "use_ai_summary": False,
+            "max_items": 10,
         }
 
-    chat_id = pipeline.get("chat_id") or config.get("telegram_chat_id") or os.getenv("TELEGRAM_CHAT_ID")
-    if not chat_id:
-        raise ValueError("Set chat_id in pipeline or config (telegram_chat_id / TELEGRAM_CHAT_ID).")
-    title = pipeline.get("title", "BirdEyeView | Job Scout")
     sources = pipeline.get("sources", [])
     keywords = pipeline.get("keywords", [])
-    max_items = int(pipeline.get("max_items", 5))
-    use_ai_summary = pipeline.get("use_ai_summary", False)
-    model = config.get("model", "gpt-4o-mini")
+    max_items = int(pipeline.get("max_items", 10))
 
     state_path = os.path.join("state", "seen_job_scout.json")
     seen = set(load_json(state_path)) if os.path.exists(state_path) else set()
@@ -82,23 +68,16 @@ def main() -> None:
         if iid not in seen:
             fresh.append(it)
             seen.add(iid)
+
+    fresh = deduplicate_semantic(fresh)
     top = fresh[:max_items]
-    if use_ai_summary and top:
-        summarize_batch(top, model=model)
 
-    from datetime import datetime
-    today = datetime.now().strftime("%Y-%m-%d")
-    if not top:
-        send_telegram(bot_token, chat_id, f"No new relevant items for <b>{html_escape(title)}</b> ({today}).")
-    else:
-        lines = [f"<b>{html_escape(title)} ({today})</b>\n"]
-        for i, it in enumerate(top, 1):
-            headline = it.get("summary_line") or it.get("title", "")
-            lines.append(f"{i}. <b>{html_escape(headline)}</b>\n{html_escape(it.get('link', ''))}\n")
-        send_telegram(bot_token, chat_id, "\n".join(lines))
+    os.makedirs(os.path.dirname(state_path), exist_ok=True)
+    with open(state_path, "w", encoding="utf-8") as f:
+        json.dump(list(seen), f, ensure_ascii=False, indent=2)
 
-    save_json(state_path, list(seen))
-    print(f"Job scout: fetched={len(all_items)} relevant={len(relevant)} sent={len(top)}")
+    # Output JSON for OpenClaw
+    print(json.dumps({"items": top}, ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":
