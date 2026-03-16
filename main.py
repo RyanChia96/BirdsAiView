@@ -40,12 +40,6 @@ def load_json(path: str):
         return json.load(f)
 
 
-def save_json(path: str, data):
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    with open(path, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
-
-
 def fetch_pipeline_items(pipeline_name: str) -> list[dict]:
     """Fetch, filter by keywords, dedupe. Returns list of items."""
     pipeline_path = os.path.join("pipelines", f"{pipeline_name}.json")
@@ -56,22 +50,9 @@ def fetch_pipeline_items(pipeline_name: str) -> list[dict]:
     keywords = pipeline.get("keywords", [])
     max_items = int(pipeline.get("max_items", 20))
 
-    state_path = os.path.join("state", f"seen_{pipeline_name}.json")
-    seen = set(load_json(state_path)) if os.path.exists(state_path) else set()
-
     all_items = fetch_sources(sources)
     relevant = [it for it in all_items if is_relevant(it, keywords)]
-
-    fresh = []
-    for it in relevant:
-        iid = item_id(it.get("title", ""), it.get("link", ""))
-        if iid not in seen:
-            fresh.append(it)
-            seen.add(iid)
-
-    fresh = deduplicate_semantic(fresh)
-    items = fresh[:max_items]
-    save_json(state_path, list(seen))
+    items = deduplicate_semantic(relevant)[:max_items]
     return items
 
 
