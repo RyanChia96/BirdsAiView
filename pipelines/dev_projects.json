@@ -1,0 +1,26 @@
+{
+  "name": "dev_projects",
+  "title": "🇲🇾 BirdEyeView | Development Projects",
+  "chat_id": "-1003556024740",
+  "sources": [
+    "https://www.thestar.com.my/rss/business",
+    "https://feeds.feedburner.com/PropertyGuruMalaysia",
+    "https://www.bnm.gov.my/rss"
+  ],
+  "keywords": [
+    "launch",
+    "develop",
+    "project",
+    "lrt",
+    "mrt",
+    "construction",
+    "development",
+    "infrastructure",
+    "developer",
+    "location",
+    "launch"
+  ],
+  "event_types": ["dev_project"],
+  "max_items": 5,
+  "use_ai_summary": true
+}

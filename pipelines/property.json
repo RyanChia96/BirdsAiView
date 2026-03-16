@@ -1,14 +1,14 @@
 {
-    "name": "property",
-    "title": "🇲🇾 BirdEyeView | Malaysia Property",
-    "chat_id": "-1003556024740",
-    "sources": [
-      "https://www.bnm.gov.my/rss"
-    ],
-    "keywords": [
-      "property", "housing", "bank negara", "bnm", "opr", "interest rate",
-      "mortgage", "loan", "rental", "napic", "jpph", "rpgT", "lrt", "mrt"
-    ],
-    "max_items": 5
-  }
-  
+  "name": "property",
+  "title": "🇲🇾 BirdEyeView | Malaysia Property",
+  "chat_id": "-1003556024740",
+  "sources": [
+    "https://www.bnm.gov.my/rss",
+    "https://www.thestar.com.my/rss/business",
+    "https://feeds.feedburner.com/PropertyGuruMalaysia"
+  ],
+  "keywords": ["property", "housing", "bank negara", "bnm", "opr", "interest rate", "mortgage", "loan", "rental", "napic", "jpph", "rpgT", "lrt", "mrt"],
+  "event_types": ["property"],
+  "max_items": 5,
+  "use_ai_summary": false
+}

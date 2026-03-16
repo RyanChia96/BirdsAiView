@@ -1,0 +1,23 @@
+{
+  "name": "ma",
+  "title": "🇲🇾 BirdEyeView | M&A & Corporate",
+  "chat_id": "-1003556024740",
+  "sources": [
+    "https://www.thestar.com.my/rss/business",
+    "https://www.malaymail.com/rss"
+  ],
+  "keywords": [
+    "acquire",
+    "acquisition",
+    "merger",
+    "bought",
+    "takeover",
+    "m&a",
+    "deal",
+    "corporate",
+    "buyout"
+  ],
+  "event_types": ["ma"],
+  "max_items": 5,
+  "use_ai_summary": true
+}

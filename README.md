@@ -1,27 +1,33 @@
 # BirdsAiView
 
-Morning digest: scrape news and job postings → filter and summarize → send to your Telegram channel. Structured for **OpenClaw** integration and future hosting.
+Daily surveillance digest: scrape Malaysia news → deduplicate → classify → score impact → send to Telegram. Structured for **OpenClaw** integration and VPS hosting.
 
 ## Directory layout
 
 ```
 BirdsAiView/
-├── .env.example          # Template for API keys (copy to .env)
 ├── config.json           # Global settings (create from config.example.json)
-├── main.py               # Gateway: run pipelines or skills
+├── main.py               # Gateway: pipelines, digest, skills
 ├── core/                 # Shared logic
 │   ├── telegram.py       # Send messages to Telegram
-│   ├── scraper.py        # RSS (+ Playwright stub) fetching
-│   └── processor.py      # AI summarization & relevance
+│   ├── scraper.py        # RSS, NewsAPI, Playwright fetching
+│   ├── processor.py      # AI summarization, relevance, event classification, impact scoring
+│   ├── deduplicator.py   # Semantic title-similarity dedup
+│   └── enricher.py       # Optional OpenClaw Web Researcher for high-impact items
 ├── pipelines/            # JSON configs per topic
 │   ├── property.json
+│   ├── inflation.json
+│   ├── ma.json
+│   ├── dev_projects.json
+│   ├── tech.json
 │   └── industries.json
+├── sources.json          # Central source registry (RSS, NewsAPI, Playwright)
 ├── state/                # Persistence (seen items, no duplicates)
-│   └── seen_<pipeline>.json
-└── skills/               # OpenClaw-style skills
-    └── job_scout/
-        ├── SKILL.md      # Instructions for the AI
-        └── run.py        # Script to run this skill
+├── scripts/
+│   └── run_daily.sh      # VPS cron script
+└── skills/
+    ├── job_scout/
+    └── surveillance_enricher/   # Deep research for M&A and tech
 ```
 
 ## How it works
@@ -47,7 +53,17 @@ BirdsAiView/
 
 Schedule `main.py` (e.g. cron or Task Scheduler) to run every morning:
 
-- `python main.py --pipeline property`
-- `python main.py --skill job_scout`
+```bash
+# Unified digest (recommended)
+python main.py --digest
 
-Later you can point OpenClaw at the same `skills/` and workspace so the agent can run these skills; the layout is ready for migration to a separate host.
+# Or run individually
+python main.py --pipeline property
+python main.py --pipeline inflation
+python main.py --pipeline ma
+python main.py --pipeline dev_projects
+python main.py --pipeline tech
+python main.py --skill job_scout
+```
+
+For VPS: `scripts/run_daily.sh` or cron: `0 7 * * * cd /path/to/BirdsAiView && python main.py --digest`

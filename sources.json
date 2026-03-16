@@ -1,4 +1,8 @@
 [
-    "https://www.thestar.com.my/rss/business",
-    "https://feeds.feedburner.com/PropertyGuruMalaysia"
+  {"type": "rss", "url": "https://www.thestar.com.my/rss/business"},
+  {"type": "rss", "url": "https://feeds.feedburner.com/PropertyGuruMalaysia"},
+  {"type": "rss", "url": "https://www.bnm.gov.my/rss"},
+  {"type": "rss", "url": "https://www.malaymail.com/rss"},
+  {"type": "newsapi", "q": "Malaysia economy", "country": "my"},
+  {"type": "newsapi", "q": "e-invoicing Malaysia", "country": "my"}
 ]

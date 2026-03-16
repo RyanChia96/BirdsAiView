@@ -1,0 +1,24 @@
+{
+  "name": "tech",
+  "title": "🇲🇾 BirdEyeView | Tech & Software",
+  "chat_id": "-1003556024740",
+  "sources": [
+    "https://www.bnm.gov.my/rss",
+    "https://www.thestar.com.my/rss/business"
+  ],
+  "keywords": [
+    "e-invoicing",
+    "software",
+    "fintech",
+    "digital",
+    "tech",
+    "api",
+    "platform",
+    "malaysia",
+    "ssm",
+    "ird"
+  ],
+  "event_types": ["tech_announcement"],
+  "max_items": 5,
+  "use_ai_summary": true
+}

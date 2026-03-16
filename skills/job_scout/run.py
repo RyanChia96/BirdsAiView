@@ -13,7 +13,7 @@ if _REPO_ROOT not in sys.path:
     sys.path.insert(0, _REPO_ROOT)
 
 from core.telegram import send_telegram, get_telegram_config, html_escape
-from core.scraper import fetch_rss
+from core.scraper import fetch_sources
 from core.processor import is_relevant, summarize_batch
 
 
@@ -74,7 +74,7 @@ def main() -> None:
     state_path = os.path.join("state", "seen_job_scout.json")
     seen = set(load_json(state_path)) if os.path.exists(state_path) else set()
 
-    all_items = fetch_rss(sources) if sources else []
+    all_items = fetch_sources(sources) if sources else []
     relevant = [it for it in all_items if is_relevant(it, keywords)]
     fresh = []
     for it in relevant:

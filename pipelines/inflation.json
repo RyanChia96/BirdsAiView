@@ -1,0 +1,25 @@
+{
+  "name": "inflation",
+  "title": "🇲🇾 BirdEyeView | Inflation & Economy",
+  "chat_id": "-1003556024740",
+  "sources": [
+    "https://www.bnm.gov.my/rss",
+    "https://www.thestar.com.my/rss/business"
+  ],
+  "keywords": [
+    "inflation",
+    "cpi",
+    "opr",
+    "interest rate",
+    "bnm",
+    "rate cut",
+    "rate hike",
+    "economy",
+    "gdp",
+    "dosm",
+    "consumer price"
+  ],
+  "event_types": ["inflation"],
+  "max_items": 5,
+  "use_ai_summary": true
+}

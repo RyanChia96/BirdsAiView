@@ -2,3 +2,6 @@ requests
 feedparser
 openai
 schedule
+scikit-learn
+python-dateutil
+playwright
